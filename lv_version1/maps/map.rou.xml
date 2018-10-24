@@ -1,0 +1,68 @@
+<routes>
+	<route edges="lg_e26 lg_e27 lg_e28 lg_e29 lg_e30 tht_e1 tht_e2" id="routeWE" />
+	<route edges="lg_e26 lg_e27 lg_e28 lg_e29 lg_e30 ltkbh_e1 ltkbh_e2" id="routeWN" />
+	<route edges="lg_e26 lg_e27 lg_e28 lg_e29 lg_ltk ltk32_e2" id="routeWSShortcut" />
+	<route edges="lg_e26 lg_e27 lg_e28 lg_e29 lg_e30 ltk32_e1 ltk32_e2" id="routeWS" />
+	
+	<route edges="ltk32_e9 ltk32_e10 ltk32_e11 ltkbh_e1 ltkbh_e2" id="routeSN" />
+	<route edges="ltk32_e9 ltk32_e10 ltk32_e11 tht_e1 tht_e2" id="routeSE" />
+	<route edges="ltk32_e9 ltk32_e10 ltk32_e11 lg_e1 lg_e2 lg_e3 lg_e4" id="routeSW" />
+	
+	<route edges="tht_e13 tht_e14 lg_e1 lg_e2 lg_e3 lg_e4" id="routeEW" />
+	<route edges="tht_e13 tht_ltk ltkbh_e2" id="routeENShortcut" />
+	<route edges="tht_e13 tht_e14 ltkbh_e1 ltkbh_e2" id="routeEN" />
+	<route edges="tht_e13 tht_e14 ltk32_e1 ltk32_e2" id="routeES" />
+	
+	<route edges="ltkbh_e20 ltkbh_e21 ltkbh_e22 ltk32_e1 ltk32_e2" id="routeNS" />
+	<route edges="ltkbh_e20 ltkbh_e21 ltk_lg lg_e2 lg_e3 lg_e4" id="routeNWShortcut" />
+	<route edges="ltkbh_e20 ltkbh_e21 ltkbh_e22 lg_e1 lg_e2 lg_e3 lg_e4" id="routeNW" />
+	<route edges="ltkbh_e20 ltkbh_e21 ltkbh_e22 tht_e1 tht_e2" id="routeNE" />	
+	
+    <vType accel="2.6" carFollowModel="KraussPS" color="yellow" decel="2.6" guiShape="motorcycle" id="motobike" impatience="1.0" laneChangeModel="SL2015" lcPushy="1.0" lcSublane="-2.0" length="1.3" maxSpeed="14.5" minGap="0.25" sigma="0.8" speedDev="0.1" tau="1.2" vClass="motorcycle" width="0.5" departLane="best"/>
+		
+	<vType accel="3.2" carFollowModel="KraussPS" color="green" decel="3.2" guiShape="motorcycle" id="superbike" impatience="1.0" laneChangeModel="SL2015" lcPushy="1.0" lcSublane="-2.0" length="1.5" maxSpeed="16.5" minGap="0.3" sigma="0.8" speedDev="0.1" tau="1.2" vClass="motorcycle" width="0.5" departLane="best"/>
+		
+    <vType accel="2.2" carFollowModel="KraussPS" color="blue" decel="2.2" guiShape="passenger/sedan" id="car" impatience="1.0" laneChangeModel="SL2015" lcPushy="1.0" lcSublane="-2.0" length="2.65" maxSpeed="14" minGap="0.7" sigma="0.8" speedDev="0.1" tau="1.2" vClass="passenger" width="1.25" departLane="best"/>
+		
+	<vType accel="1.8" carFollowModel="KraussPS" color="red" decel="1.8" guiShape="passenger/sedan" id="supercar" impatience="1.0" laneChangeModel="SL2015" lcPushy="1.0" lcSublane="-2.0" length="2.65" maxSpeed="13.5" minGap="0.7" sigma="0.8" speedDev="0.1" tau="1.2" vClass="passenger" width="1.5" departLane="best"/>
+	
+
+	
+	<flow departLane="random" id="motor_SN" probability="0.44" route="routeSN" type="motobike" /> 
+	<flow departLane="random" id="car_SN" latAlignment="left" probability="0.264" route="routeSN" type="supercar" /> 
+	<flow departLane="random" id="motor_SE" latAlignment="right" probability="0.066" route="routeSE" type="motobike" /> 
+	<flow departLane="random" id="car_SE" latAlignment="left" probability="0.0264" route="routeSE" type="car" /> 
+	<flow departLane="random" id="motor_SW" latAlignment="left" probability="0.0308" route="routeSW" type="superbike" /> 
+	<flow departLane="random" id="car_SW" latAlignment="left" probability="0.0132" route="routeSW" type="car" /> 
+	
+		
+	
+	<flow departLane="random" id="motor_NS" probability="0.385" route="routeNS" type="motobike" /> 
+	<flow departLane="random" id="car_NS" probability="0.242" route="routeNS" type="car" /> 
+	<flow departLane="random" id="motor_NW" latAlignment="right" probability="0.077" route="routeNW" type="superbike" /> 
+	<flow departLane="random" id="car_NW" latAlignment="left" probability="0.0242" route="routeNW" type="car" /> 
+	<flow departLane="random" id="motor_NW_Shortcut" latAlignment="right" probability="0.077" route="routeNWShortcut" type="superbike" />
+	<flow departLane="random" id="motor_NE" latAlignment="left" probability="0.0231" route="routeNE" type="motobike" /> 
+	<flow departLane="random" id="car_NE" latAlignment="left" probability="0.01452" route="routeNE" type="supercar" /> 
+	
+	
+	<flow departLane="random" id="motor_WE" probability="0.176" route="routeWE" type="motobike" /> 
+	<flow departLane="random" id="car_WE" latAlignment="left" probability="0.0715" route="routeWE" type="car" /> 
+	<flow departLane="random" id="motor_WS" latAlignment="right" probability="0.0616" route="routeWS" type="superbike" /> 
+	<flow departLane="random" id="car_WS" latAlignment="left" probability="0.02145" route="routeWS" type="car" /> 
+	<flow departLane="random" id="motor_WS_Shortcut" latAlignment="right" probability="0.0616" route="routeWSShortcut" type="motobike" />
+	<flow departLane="random" id="motor_WN" latAlignment="left" probability="0.01584" route="routeWN" type="superbike" /> 
+	<flow departLane="random" id="car_WN" latAlignment="left" probability="0.00572" route="routeWN" type="supercar" /> 
+	
+	
+	<flow departLane="random" id="motor_EW" probability="0.209" route="routeEW" type="motobike" /> 
+	<flow departLane="random" id="car_EW" latAlignment="left" probability="0.088" route="routeEW" type="car" /> 
+	<flow departLane="random" id="motor_EN" latAlignment="right" probability="0.06688" route="routeEN" type="superbike" /> 
+	<flow departLane="random" id="car_EN" latAlignment="left" probability="0.02904" route="routeEN" type="supercar" /> 
+	<flow departLane="random" id="motor_EN_Shortcut" latAlignment="right" probability="0.06688" route="routeENShortcut" type="motobike" />
+	<flow departLane="random" id="motor_ES" latAlignment="left" probability="0.0209" route="routeES" type="superbike" /> 
+	<flow departLane="random" id="car_ES" latAlignment="left" probability="0.00616" route="routeES" type="car" /> 
+	
+	
+	
+</routes>

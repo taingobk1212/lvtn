@@ -1,0 +1,299 @@
+<turns>
+   <interval begin="0" end="3600">
+
+         <sink edges="-472469742 tht_e7 -520598291#0 520598291#0 -472061129#0 -304359232#0 -32577525#7 32577525#8 -457601640#2 457601640#2 32584718#7 -32584718#8 -304360842#1  -304360842#5 304360842#6 -32584720#0 32584720#0 457601640#0 -457601642#0 -32586407 ltkbh_e8 -286471172#1 286471172#1 -147394910#0 147394910#0"/>
+
+
+   		<!-- to hien thanh -> ly thuong kiet, lu gia -->
+      	<fromEdge id="tht_e14">
+         	<toEdge id="ltkbh_e1" probability="0.2"/>
+         	<toEdge id="lg_e1" probability="0.6"/>
+         	<toEdge id="ltk32_e1" probability="0.2"/>
+      	</fromEdge>
+
+      	<!-- lu gia -> ly thuong kiet, to hien thanh -->
+      	<fromEdge id="lg_e30">
+         	<toEdge id="ltkbh_e1" probability="0.2"/>
+         	<toEdge id="tht_e1" probability="0.6"/>
+         	<toEdge id="ltk32_e1" probability="0.2"/>
+      	</fromEdge>
+
+      	<!-- ly thuong kiet -> lu gia, to hien thanh, ly thuong kiet -->
+      	<fromEdge id="ltkbh_e22">
+         	<toEdge id="lg_e1" probability="0.2"/>
+         	<toEdge id="ltk32_e1" probability="0.6"/>
+         	<toEdge id="tht_e1" probability="0.2"/>
+      	</fromEdge>
+      	<fromEdge id="ltk32_e11">
+         	<toEdge id="lg_e1" probability="0.2"/>
+         	<toEdge id="ltkbh_e1" probability="0.6"/>
+         	<toEdge id="tht_e1" probability="0.2"/>
+      	</fromEdge>
+
+
+   		<!-- to hien thanh -> nga tu ltk -->
+      	<fromEdge id="tht_e8">
+         	<toEdge id="tht_e9" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="tht_e9">
+         	<toEdge id="tht_e10" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="tht_e10">
+         	<toEdge id="tht_e11" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="tht_e11">
+         	<toEdge id="tht_e12" probability="0.8"/>
+         	<toEdge id="304359232#0" probability="0.2"/>
+      	</fromEdge>
+      	<fromEdge id="tht_e12">
+         	<toEdge id="tht_e13" probability="0.8"/>
+         	<toEdge id="472469742" probability="0.2"/>
+      	</fromEdge>
+      	<fromEdge id="tht_e13">
+         	<toEdge id="tht_e14" probability="0.8"/>
+         	<toEdge id="tht_ltk" probability="0.2"/>
+      	</fromEdge>
+
+      	<!-- nga tu ltk-> lu gia -->
+      	<fromEdge id="lg_e1">
+         	<toEdge id="lg_e2" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e2">
+         	<toEdge id="lg_e3" probability="0.9"/>
+         	<toEdge id="-304360663#3" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e3">
+         	<toEdge id="lg_e4" probability="0.9"/>
+         	<toEdge id="-304360665#3" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e4">
+         	<toEdge id="lg_e5" probability="0.9"/>
+         	<toEdge id="32586095#0" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e5">
+         	<toEdge id="lg_e6" probability="0.9"/>
+         	<toEdge id="-457601642#4" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e6">
+         	<toEdge id="lg_e7" probability="0.9"/>
+         	<toEdge id="-457601640#4" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e7">
+         	<toEdge id="lg_e8" probability="0.9"/>
+         	<toEdge id="-457601637#4" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e8">
+         	<toEdge id="lg_e9" probability="0.9"/>
+         	<toEdge id="-457601638#4" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e9">
+         	<toEdge id="lg_e10" probability="0.9"/>
+         	<toEdge id="457601641#0" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e10">
+         	<toEdge id="lg_e11" probability="0.9"/>
+         	<toEdge id="32587114#0" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e11">
+         	<toEdge id="lg_e12" probability="0.9"/>
+         	<toEdge id="-286469895" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e12">
+         	<toEdge id="lg_e13" probability="0.9"/>
+         	<toEdge id="-286471176#1" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e13">
+         	<toEdge id="lg_e14" probability="0.9"/>
+         	<toEdge id="-457601633#3" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e14">
+         	<toEdge id="lg_e15" probability="0.9"/>
+         	<toEdge id="-286471172#2" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e15">
+         	<toEdge id="304360842#2" probability="0.5"/>
+         	<toEdge id="-304360842#1" probability="0.5"/>
+      	</fromEdge>
+
+
+      	<!-- lu gia -> nga tu ltk -->
+      	<fromEdge id="lg_e16">
+         	<toEdge id="lg_e17" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e17">
+         	<toEdge id="lg_e18" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e18">
+         	<toEdge id="lg_e19" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e19">
+         	<toEdge id="lg_e20" probability="0.9"/>
+         	<toEdge id="-286469895" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e20">
+         	<toEdge id="lg_e21" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e21">
+         	<toEdge id="lg_e22" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e22">
+         	<toEdge id="lg_e23" probability="0.9"/>
+         	<toEdge id="-457601638#4" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e23">
+         	<toEdge id="lg_e24" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e24">
+         	<toEdge id="lg_e25" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e25">
+         	<toEdge id="lg_e26" probability="0.9"/>
+         	<toEdge id="-457601642#4" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e26">
+         	<toEdge id="lg_e27" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e27">
+         	<toEdge id="lg_e28" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e28">
+         	<toEdge id="lg_e29" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="lg_e29">
+         	<toEdge id="lg_e30" probability="0.8"/>
+         	<toEdge id="lg_ltk" probability="0.2"/>
+      	</fromEdge>
+
+
+
+      	<!-- nga tu ltk -> to hien thanh -->
+      	<fromEdge id="tht_e1">
+         	<toEdge id="tht_e2" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="tht_e2">
+         	<toEdge id="tht_e3" probability="0.7"/>
+         	<toEdge id="472469742" probability="0.3"/>
+      	</fromEdge>
+      	<fromEdge id="tht_e3">
+         	<toEdge id="tht_e4" probability="0.8"/>
+         	<toEdge id="304359232#0" probability="0.2"/>
+      	</fromEdge>
+      	<fromEdge id="tht_e4">
+         	<toEdge id="tht_e5" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="tht_e5">
+         	<toEdge id="tht_e6" probability="0.8"/>
+      		<toEdge id="472061129#0" probability="0.2"/>
+      	</fromEdge>
+      	<fromEdge id="tht_e6">
+         	<toEdge id="tht_e7" probability="0.8"/>
+      		<toEdge id="520598291#0" probability="0.2"/>
+      	</fromEdge>
+
+      	<!-- bac hai -> nga tu ltk -->
+      	<fromEdge id="ltkbh_e9">
+         	<toEdge id="ltkbh_e10" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e10">
+         	<toEdge id="ltkbh_e11" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e11">
+         	<toEdge id="ltkbh_e12" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e12">
+         	<toEdge id="ltkbh_e13" probability="0.95"/>
+         	<toEdge id="32583149#0" probability="0.05"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e13">
+         	<toEdge id="ltkbh_e14" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e14">
+         	<toEdge id="ltkbh_e15" probability="0.95"/>
+         	<toEdge id="-32584718#10" probability="0.05"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e15">
+         	<toEdge id="ltkbh_e16" probability="0.9"/>
+         	<toEdge id="-502903918" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e16">
+         	<toEdge id="ltkbh_e17" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e17">
+         	<toEdge id="ltkbh_e18" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e18">
+         	<toEdge id="ltkbh_e19" probability="0.9"/>
+      		<toEdge id="32581835#0" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e19">
+         	<toEdge id="ltkbh_e20" probability="0.9"/>
+         	<toEdge id="-304360664" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e20">
+         	<toEdge id="ltkbh_e21" probability="0.8"/>
+         	<toEdge id="-gneE27" probability="0.1"/>
+         	<toEdge id="gneE28" probability="0.1"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e21">
+         	<toEdge id="ltkbh_e22" probability="0.8"/>
+         	<toEdge id="ltk_lg" probability="0.2"/>
+      	</fromEdge>
+
+      	<!-- nga tu ltk -> ba thang hai -->
+      	<fromEdge id="ltk32_e1">
+         	<toEdge id="ltk32_e2" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltk32_e2">
+         	<toEdge id="ltk32_e3" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltk32_e3">
+         	<toEdge id="ltk32_e4" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltk32_e4">
+         	<toEdge id="ltk32_e5" probability="1.0"/>
+      	</fromEdge>
+
+
+      	<!-- ba thang hai -> nga tu ltk -->
+      	<fromEdge id="ltk32_e6">
+         	<toEdge id="ltk32_e7" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltk32_e7">
+         	<toEdge id="ltk32_e8" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltk32_e8">
+         	<toEdge id="ltk32_e9" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltk32_e9">
+         	<toEdge id="ltk32_e10" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltk32_e10">
+         	<toEdge id="ltk32_e11" probability="1.0"/>
+      	</fromEdge>
+
+
+      	<!-- nga tu ltk -> bac hai -->
+      	<fromEdge id="ltkbh_e1">
+         	<toEdge id="ltkbh_e2" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e2">
+         	<toEdge id="ltkbh_e3" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e3">
+         	<toEdge id="ltkbh_e4" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e4">
+         	<toEdge id="ltkbh_e5" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e5">
+         	<toEdge id="ltkbh_e6" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e6">
+         	<toEdge id="ltkbh_e7" probability="1.0"/>
+      	</fromEdge>
+      	<fromEdge id="ltkbh_e7">
+         	<toEdge id="ltkbh_e8" probability="1.0"/>
+      	</fromEdge>
+
+   </interval>
+</turns>
