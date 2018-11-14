@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import traci  
-from Tkinter import *;
+from Tkinter import *
 from threading import Thread
 import os
 import sys
@@ -117,6 +117,6 @@ class Application(Frame):
         self.pack()
         self.createWidgetsConnect()
         
-root = Tk();
+root = Tk()
 app = Application(master=root)
 app.mainloop()

@@ -140,7 +140,9 @@
         var phase1 = 0;
         var phase2 = 0; 
         var id=''; 
+        var intname='';
         var keyId;  
+        var contentpopup = "<a>Intersection Name:"+ intname +"</a><br><menu><a>ID:</a><input type=\"text\" id=\"idmarker\" value="+ id +" readonly><br><a>Phase 1</a><input id = \"p1marker\" type=\"text\" value="+phase1+"><br><a>Phase 2</a><input id = \"p2marker\" type=\"text\" value="+phase2+"><br><button onclick=\"setParams()\">Set params</button><button>Auto</button></menu>";
         // Download GeoJSON data with Ajax
         fetch(dataurl)
           .then(function(resp) {
@@ -159,8 +161,8 @@
           var loc = dataLoc[i].loc;          
           marker = new L.Marker(new L.latLng(loc),{title:dataLoc[i].title}).on('click', markerOnClick).addTo(map);    
           marker.key = dataLoc[i].title;      
-          marker.bindPopup("<menu><a>ID:</a><input type=\"text\" id=\"idmarker\" value=\"ID:\" readonly><br><a>Phase 1</a><input id = \"p1marker\" type=\"text\" value="+phase1+"><br><a>Phase 2</a><input id = \"p2marker\" type=\"text\" value="+phase2+"><br><button onclick=\"setParams()\">Set params</button><button>Auto</button></menu>").openPopup();   
-          marker.bindPopup("<menu><a>ID:</a><input type=\"text\" id=\"idmarker\" value=\"ID:\" readonly><br><a>Phase 1</a><input id = \"p1marker\" type=\"text\" value="+phase1+"><br><a>Phase 2</a><input id = \"p2marker\" type=\"text\" value="+phase2+"><br><button onclick=\"setParams()\">Set params</button><button>Auto</button></menu>").closePopup();
+          marker.bindPopup(contentpopup,{maxWidth:1000}).openPopup();   
+          marker.bindPopup(contentpopup).closePopup();
         }  
       var myLayer = L.geoJSON().addTo(map);
       });     
@@ -179,15 +181,17 @@
                 ) 
                 ,
                 success: function(response) {
-                  //alert(response);
-                  //alert(response.phase1); 
-                  //alert(response.id);
-                  //alert(e.target.key);
-                  var popup = e.target.getPopup();
+                  id = response.id;
+                  intname = response.name;
+                  //alert(intname);
+                  phase1 = response.phase1;
+                  phase2 = response.phase2;
+                  contentpopup = "<a>Intersection Name:"+ intname +"</a><br><menu><a>ID:</a><input type=\"text\" id=\"idmarker\" value="+ id +" readonly><br><a>Phase 1</a><input id = \"p1marker\" type=\"text\" value="+phase1+"><br><a>Phase 2</a><input id = \"p2marker\" type=\"text\" value="+phase2+"><br><button onclick=\"setParams()\">Set params</button><button>Auto</button></menu>";
+                  var popup = e.target.getPopup().setContent(contentpopup);
                   //alert(document.getElementById("p1marker").value); 
-                  document.getElementById("idmarker").value = response.id;      
-                  document.getElementById("p1marker").value = response.phase1; 
-                  document.getElementById("p2marker").value = response.phase2; 
+                  //document.getElementById("idmarker").value = response.id;      
+                  //document.getElementById("p1marker").value = response.phase1; 
+                  //document.getElementById("p2marker").value = response.phase2; 
                   //alert("done");                
                 },
                 error: function(xhr, status, error) {

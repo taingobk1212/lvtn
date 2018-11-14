@@ -18,5 +18,8 @@ class MushroomSpot(models.Model):
 
 class Traffic(models.Model):   
     intersection_id = models.CharField(max_length=30, primary_key=True)
+    intersection_name = models.CharField(max_length=30)
     phase_one = models.CharField(max_length=30)
     phase_two = models.CharField(max_length=30)
+    is_params = models.BooleanField(default=False)
+    is_auto = models.BooleanField(default=False)
