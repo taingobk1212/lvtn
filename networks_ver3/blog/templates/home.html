@@ -1,0 +1,321 @@
+{% load leaflet_tags %}
+<html>
+  <head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+      table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+      }
+      th, td {
+         padding: 15px;
+        text-align: left;
+      }
+
+      .leaflet-container { height: 100%; }
+      input {
+        outline: 1px;
+        background-color: white;
+        border: 1px;
+        padding: 10px 15px;
+        {% comment %} color: #53e3a6; {% endcomment %}
+        color: black;
+        border-radius: 3px;
+        width: 125px;
+        cursor: pointer;
+        font-size: 18px;        
+        margin-top: 1px;
+        margin-right: 2px;
+      }
+      a {
+        font-size: 18px; 
+      }
+      button {
+        outline: 0;
+        background-color: gray;
+        border: 0;
+        padding: 10px 15px;
+        color: #53e3a6;
+        border-radius: 3px;
+        width: 125px;
+        cursor: pointer;
+        font-size: 18px;        
+        margin-top: 1px;
+        margin-right: 2px;
+      }
+      button:hover {
+        background-color: black;
+      }
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #50a3a2;
+        background: -webkit-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+        background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      body h1 {
+        font-size: 40px;
+        font-weight: 200;
+      }
+      .topnav {
+        overflow: hidden;
+        background-color: #e9e9e9;
+      }
+
+    .topnav a {
+      float: right;
+      display: block;
+      color: black;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+
+    .topnav a.active {
+      background-color: #2196F3;
+      color: white;
+    }
+
+    .topnav .login-container {
+      float: right;
+    }
+
+    .topnav input[type=text] {
+      padding: 6px;
+      margin-top: 8px;
+      font-size: 17px;
+      border: none;
+      width:120px;
+    }
+
+    .topnav .login-container button {
+      float: right;
+      padding: 6px 10px;
+      margin-top: 8px;
+      margin-right: 16px;
+      background-color: #555;
+      color: white;
+      font-size: 17px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .topnav .login-container button:hover {
+        background-color: green;
+    }
+
+    @media screen and (max-width: 600px) {
+    .topnav .login-container {
+      float: none;
+    }
+    .topnav a, .topnav input[type=text], .topnav .login-container button {
+      float: none;
+      display: block;
+      text-align: left;
+      width: 100%;
+      margin: 0;
+      padding: 14px;
+    }
+    .topnav input[type=text] {
+      border: 1px solid #ccc;  
+    }
+    }
+    #controlDialog {
+  position: absolute;  
+  overflow: auto;
+  overflow-y: auto;
+}
+    </style>
+    <script type="text/javascript">
+      var datatraffic = null;
+      var dataurl = '{% url "data" %}';
+      var dataLoc = [    
+		    {"loc":[10.770446,106.658124], "title":"ltk_lg"},
+		    {"loc":[10.763809,106.659989], "title":"ltk_32"}
+      ];
+      var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
+      window.addEventListener("map:init", function (event) {
+        var map = event.detail.map;
+        var flagPast=0;
+        var marker;
+        var markers;   
+        var phase1 = 0;
+        var phase2 = 0; 
+        var id=''; 
+        var intname='';
+        var keyId;  
+        var contentpopup = "<a>Intersection Name:"+ intname +"</a><br><a id=\"tltime\"></a><menu><a>ID:</a><input type=\"text\" id=\"idmarker\" value="+ id +" readonly><br><a>Green tl Cycle of</a><input id = \"p1marker\" type=\"number\" value="+phase1+"><br><a>Green tl Cycle of</a><input id = \"p2marker\" type=\"number\" value="+phase2+"><br><button onclick=\"setParams()\">Set params</button><button>Auto</button></menu>";
+        // Download GeoJSON data with Ajax
+        fetch(dataurl)
+          .then(function(resp) {
+            return resp.json();
+          })
+          .then(function(data) {
+            L.geoJson(data, {
+              onEachFeature: function onEachFeature(feature, layer) {
+                var props = feature.properties;
+                var content = `<img width="300" src="${props.picture_url}"/><h3>${props.title}</h3><p>${props.description}</p>`;
+                layer.bindPopup(content);
+            }}).addTo(map);
+          });   
+          for (i in dataLoc) {
+          // alert(i);
+          var loc = dataLoc[i].loc;          
+          marker = new L.Marker(new L.latLng(loc),{title:dataLoc[i].title}).on('click', markerOnClick).addTo(map);    
+          marker.key = dataLoc[i].title;      
+          marker.bindPopup(contentpopup,{maxWidth:1000}).openPopup();   
+          marker.bindPopup(contentpopup).closePopup();
+        }  
+      var myLayer = L.geoJSON().addTo(map);
+      });     
+      function markerOnClick(e)
+      { 
+          keyId = e.target.key;
+          // ajax getdata
+          $.ajax({
+                type: 'get',                
+                url: 'gettldata',
+                data:  (
+                  {   
+                    //'csrfmiddlewaretoken': token,
+                    id: e.target.key
+                  }
+                ) 
+                ,
+                success: function(response) {
+                  id = response.id;
+                  intname = response.name;
+                  //alert(intname);
+                  phase1 = response.phase1;
+                  phase2 = response.phase2;
+                  apprname1 = response.apprname1
+                  apprname2 = response.apprname2
+                  contentpopup = "<menu><a style=\"color: red\">Intersection Name:"+ intname +"</a><br><a>Green tl Cycle of "+apprname1+":</a><input id = \"p1marker\" type=\"number\" value="+phase1+"><br><a>Green tl Cycle of "+apprname2+":</a><input id = \"p2marker\" type=\"number\" value="+phase2+"><br><button onclick=\"getDetails()\">Details</button><button onclick=\"setParams()\">Set params</button><button onclick=\"setAuto()\">Auto</button><a style=\"color: red\">Status:</a><input style=\"font-size: 13px\" id=\"idtus\" value = \"None\" readonly></menu>";
+                  var popup = e.target.getPopup().setContent(contentpopup);                            
+                },
+                error: function(xhr, status, error) {
+                  // shit happens friends!
+                }
+              });                 
+      }    
+      function setParams(){
+        //alert("test");
+        document.getElementById("idtus").value = "Applied Params";
+        $.ajax({
+                type: 'get',                
+                url: 'puttldata',
+                data:  (
+                  {
+                    id: keyId,
+                    p1: document.getElementById("p1marker").value,
+                    p2: document.getElementById("p2marker").value
+                  }
+                ) 
+                ,
+                success: function(response) {   
+                    
+                },
+                error: function(xhr, status, error) {
+                  // shit happens friends!
+                }
+              });              
+      }    
+       function setAuto(){
+        //alert("test");
+        document.getElementById("idtus").value = "Auto";
+        $.ajax({
+                type: 'get',                
+                url: 'puttldata',
+                data:  (
+                  {
+                    id: keyId,
+                    tlauto: 'True'
+                  }
+                ) 
+                ,
+                success: function(response) {   
+                  
+                },
+                error: function(xhr, status, error) {
+                  // shit happens friends!
+                }
+              });              
+      }  
+      function getDetails(){                    
+          document.getElementById('controlDialog').showModal();
+      }  
+      function startTime() {
+        var today = new Date();
+        var h = today.getHours();
+        var m = today.getMinutes();
+        var s = today.getSeconds();
+        m = checkTime(m);
+        s = checkTime(s);
+        document.getElementById('tltime').innerHTML =
+        h + ":" + m + ":" + s;
+        var t = setTimeout(startTime, 500);
+      }
+      function checkTime(i) {
+        if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+        return i;
+      }  
+    </script>
+   
+  </head>
+  <body onload="startTime()">           
+    <div class="topnav">
+        <a id="tltime"></a>
+        <a>{{ user.username }}</a>
+        <div class="login-container">
+          <form action="/action_page.php">     
+            <button type="button" onclick="window.location.href='/logout/' ">Logout</button>
+          </form>
+        </div>
+    </div>
+    <dialog id="controlDialog">
+        <form id="formctrl" method="dialog">          
+          <h3>Control Traffic Light</h3>
+          <table style="width:100%">
+            <tr>
+              <th>Lane</th>
+              <th>LTK (Buu dien)</th> 
+              <th>LTK (SVD PhuTho)</th>
+              <th>To Hien Thanh</th>
+              <th>Lu Gia</th>
+            </tr>
+            <tr>
+              <td>Jill</td>
+              <td>Smith</td>
+              <td>50</td>
+              <td>50</td>
+              <td>50</td>
+            </tr>
+            <tr>
+              <td>Eve</td>
+              <td>Jackson</td>
+              <td>94</td>
+              <td>50</td>
+              <td>50</td>
+            </tr>
+            <tr>
+              <td>John</td>
+              <td>Doe</td>
+              <td>80</td>
+              <td>50</td>
+              <td>50</td>
+            </tr>
+          </table>
+          <br>
+          <button>Close</button>
+        </form>
+    </dialog>     
+    {% leaflet_map "main" %}      
+  </body>
+</html>

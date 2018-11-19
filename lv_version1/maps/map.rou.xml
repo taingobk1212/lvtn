@@ -13,7 +13,7 @@
 	<route edges="tht_e13 tht_e14 ltkbh_e1 ltkbh_e2" id="routeEN" />
 	<route edges="tht_e13 tht_e14 ltk32_e1 ltk32_e2" id="routeES" />
 	
-	<route edges="ltkbh_e20 ltkbh_e21 ltkbh_e22 ltk32_e1 ltk32_e2" id="routeNS" />
+	<route edges="ltkbh_e19 ltkbh_e20 ltkbh_e21 ltkbh_e22 ltk32_e1 ltk32_e2" id="routeNS" />
 	<route edges="ltkbh_e20 ltkbh_e21 ltk_lg lg_e2 lg_e3 lg_e4" id="routeNWShortcut" />
 	<route edges="ltkbh_e20 ltkbh_e21 ltkbh_e22 lg_e1 lg_e2 lg_e3 lg_e4" id="routeNW" />
 	<route edges="ltkbh_e20 ltkbh_e21 ltkbh_e22 tht_e1 tht_e2" id="routeNE" />	

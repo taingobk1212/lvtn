@@ -17,6 +17,7 @@ import requests
 import socket
 import threading
 import json
+import intersection
 
 # we need to import python modules from the $SUMO_HOME/tools directory
 try:
@@ -30,12 +31,14 @@ except ImportError:
         "please declare environment variable 'SUMO_HOME' as the root directory of your sumo installation (it should contain folders 'bin', 'tools' and 'docs')")
 
 class Application(Frame): 
+    HOST = '127.0.0.1'
+    PORT = '8000'
     isfirst = False
     connected = False
     issetparams = False
     set_phase_ltk = False
     set_phase_lgtht = False
-    fields = 'Red tl Violation Rate', 'Green tl cycle of Ly Thuong Kiet', 'Green tl cycle of Lu Gia - To Hien Thanh'
+    fields = 'Green tl cycle of Ly Thuong Kiet', 'Green tl cycle of Lu Gia - To Hien Thanh'
     
     #params ( value : percent)
     red_light = 0
@@ -46,6 +49,13 @@ class Application(Frame):
     lgtht_green = 0
     fltk_green = 0
     flgtht_green = 0
+
+    # value info intersection
+
+    list_vehicle_ltkbd = []
+    list_vehicle_ltkntd = []
+    list_vehicle_lg = []
+    list_vehicle_tht = []
     
     def __init__(self, parent):
         Frame.__init__(self, parent)
@@ -66,26 +76,45 @@ class Application(Frame):
         
     def stop_sumo(self):
         traci.close()
-    
+   
     def run_sumo(self):       
-        global set_phase_ltk, set_phase_lgtht, connected, isfirst, issetparams
+        global set_phase_ltk, set_phase_lgtht, connected, isfirst, issetparams, HOST, PORT
+        global list_vehicle_ltkbd, list_vehicle_ltkntd, list_vehicle_lg, list_vehicle_tht
         traci.switch("sumovn")       
         """execute the TraCI control loop"""
         print('running')
+        httphost_get = 'http://'+self.HOST+':'+self.PORT+'/home/gettldata' 
+        httphost_put = 'http://'+self.HOST+':'+self.PORT+'/home/puttldata' 
         step = 0
         while traci.simulation.getMinExpectedNumber() > 0:                  
-            traci.simulationStep()
+            traci.simulationStep()  
             
-            # listVehicleId = traci.vehicle.getIDList()
-            # print(listVehicleId)
-            #set phase tls
-            phase = traci.trafficlights.getPhase("ltk_intersection")
-            # print(traci.trafficlights.getPhaseDuration("ltk_intersection"))
-            # print(phase)
+            print("time ",traci.simulation.getTime())
+            if (int(traci.simulation.getTime())%300) == 0:   
+                print("Vehicle come 5 minute ago")             
+                print("lg come: ", len(self.list_vehicle_lg))
+                print("tht come: ", len(self.list_vehicle_tht))
+                print("ltkbd come: ", len(self.list_vehicle_ltkbd))
+                print("ltkntd come: ", len(self.list_vehicle_ltkntd))
+                # clear list after 5 minute
+                self.list_vehicle_lg = []
+                self.list_vehicle_tht = []
+                self.list_vehicle_ltkbd = []
+                self.list_vehicle_ltkntd = []
+
+            self.countVehicleCome(traci.inductionloop.getIDList())                             
+
+            phase = traci.trafficlights.getPhase("ltk_intersection")          
+
             if (self.connected == True and self.issetparams == False):
-                info = {'id':'ltk_lg'}      
-                res = requests.get('http://192.168.137.1:8000/home/gettldata', params = info)                    
-                
+                try:
+                    info = {'id':'ltk_lg'}      
+                    res = requests.get(httphost_get, params = info) 
+                    self.connected = True
+                except:
+                    self.connected = False 
+                    print("connect fail")                    
+
                 if (res.json()['isparams'] == True):    
                     print("set params")
                     self.ltk_green = res.json()['phase1']
@@ -93,11 +122,7 @@ class Application(Frame):
                    
                     self.lgtht_green = res.json()['phase2']  
                     self.set_phase_lgtht = True 
-                    
-                # info = {'id':'ltk_lg','bparams': False}   
-                # res = requests.get('http://192.168.0.102:8000/home/puttldata', params = info)
-                # print(phase)    
-                # send data traffic to server first connect
+                
                 if (self.isfirst == True):
                     global fltk_green, flgtht_green
                     if (phase == 0):
@@ -107,7 +132,7 @@ class Application(Frame):
 
                     if (self.fltk_green != 0 and self.flgtht_green != 0):    
                         info = {'id':'ltk_lg', 'p1': self.fltk_green, 'p2': self.flgtht_green, 'firstparams': False}   
-                        res = requests.get('http://192.168.137.1:8000/home/puttldata', params = info)
+                        res = requests.get(httphost_put, params = info)
                         self.isfirst = False
                         print("put param to server")  
                         print(self.fltk_green) 
@@ -121,7 +146,7 @@ class Application(Frame):
                         self.set_phase_ltk = False
                         print("success ltk: ",int(self.ltk_green))
                         info = {'id':'ltk_lg','bparams': False}   
-                        res = requests.get('http://192.168.137.1:8000/home/puttldata', params = info)
+                        res = requests.get(httphost_put, params = info)
                    
                 if (self.set_phase_lgtht == True and phase == 2 and int(self.lgtht_green) > 10): 
                     old_lgtht_green = traci.trafficlights.getPhaseDuration("ltk_intersection")
@@ -130,9 +155,9 @@ class Application(Frame):
                         self.set_phase_lgtht = False
                         print("success lgtht: ",self.lgtht_green) 
                         info = {'id':'ltk_lg','bparams': False}   
-                        res = requests.get('http://192.168.137.1:8000/home/puttldata', params = info)
+                        res = requests.get(httphost_put, params = info)
             else: 
-                # print("normal")    
+                # print("normal")                    
                 if (self.set_phase_ltk == True and phase == 0 and int(self.ltk_green) > 10): 
                     old_ltk_green = traci.trafficlights.getPhaseDuration("ltk_intersection")
                     print(old_ltk_green)
@@ -165,7 +190,42 @@ class Application(Frame):
             step += 1            
         traci.close()
         sys.stdout.flush() 
-        
+
+    def countVehicleCome(self, listInductionLoopId):
+        global list_vehicle_ltkbd, list_vehicle_ltkntd, list_vehicle_lg, list_vehicle_tht
+        nvhc_lg = []       
+        nvhc_tht = []
+        nvhc_ltkbd = []
+        nvhc_ltkntd = []    
+        for inductionLoopId in listInductionLoopId:
+            if 'lg_detector' in inductionLoopId:                  
+                nvhc_lg = traci.inductionloop.getLastStepVehicleIDs(inductionLoopId)               
+                for vehicleId in nvhc_lg:
+                    if (self.list_vehicle_lg.count(vehicleId) == 0):
+                        self.list_vehicle_lg.append(vehicleId)
+            if 'tht_detector' in inductionLoopId:             
+                nvhc_tht = traci.inductionloop.getLastStepVehicleIDs(inductionLoopId)  
+                for vehicleId in nvhc_tht:
+                    if (self.list_vehicle_tht.count(vehicleId) == 0):
+                        self.list_vehicle_tht.append(vehicleId)
+
+            if 'ltkbd_detector' in inductionLoopId:             
+                nvhc_ltkbd = traci.inductionloop.getLastStepVehicleIDs(inductionLoopId) 
+                for vehicleId in nvhc_ltkbd:
+                    if (self.list_vehicle_ltkbd.count(vehicleId) == 0):
+                        self.list_vehicle_ltkbd.append(vehicleId)
+
+            if 'ltkntd_detector' in inductionLoopId:             
+                nvhc_ltkntd = traci.inductionloop.getLastStepVehicleIDs(inductionLoopId)     
+                for vehicleId in nvhc_ltkntd:
+                    if (self.list_vehicle_ltkntd.count(vehicleId) == 0):
+                        self.list_vehicle_ltkntd.append(vehicleId)
+
+        # print("lg come: ", len(self.list_vehicle_lg))
+        # print("tht come: ", len(self.list_vehicle_tht))
+        # print("ltkbd come: ", len(self.list_vehicle_ltkbd))
+        # print("ltkntd come: ", len(self.list_vehicle_ltkntd))
+
     def start_sumo(self):        
         options = self.get_options()      
         if options.nogui:
@@ -218,24 +278,44 @@ class Application(Frame):
         except:
             return False        
 
-    def autotlBtn(self):        
+    def connectserver(self): 
+        global HOST, PORT       
         try:
+            # get ip lan wireless 
+            self.HOST = socket.gethostbyname_ex(socket.gethostname())[2][3]
+            print("Connected server by " + self.HOST)
             info = {'id':'ltk_lg'}      
-            res = requests.get('http://192.168.137.1:8000/home/gettldata', params = info)                       
+            res = requests.get('http://'+self.HOST+':'+self.PORT+'/home/gettldata', params = info)                       
             self.connected = True
             self.isfirst = True
+            self.disconnectButton.configure(state=NORMAL)     
+            self.connectButton.configure(state=DISABLED)            
         except:
             print("Connect fail") 
             self.connected = False  
             self.isfirst = True 
+
+    def disconnect(self):
+        print(socket.gethostbyname_ex(socket.gethostname())[2][3])                
+        self.connected = False 
+        self.isfirst = True       
+        self.disconnectButton.configure(state=DISABLED)     
+        self.connectButton.configure(state=NORMAL)    
+
+        self.HOST = socket.gethostbyname_ex(socket.gethostname())[2][3]
+        print("Connected server by " + self.HOST)
+        info = {'id':'ltk_lg','vltkbd':1,'vltkntd':1,'vlg':1,'vtht':1}    
+        res = requests.get('http://'+self.HOST+':'+self.PORT+'/home/puttldatadetails', params = info)  
 
     def initUI(self):
         self.parent.title("Traffic Controller")        
         frame = Frame(self, relief=RAISED, borderwidth=1)
         frame.pack(fill=BOTH, expand=True)
         self.pack(fill=BOTH, expand=True)
-        connectButton = Button(self, text="AutoTl", bg ='green', command = self.autotlBtn)     
-        connectButton.pack(side=LEFT, padx=5, pady=5)
+        self.connectButton = Button(self, text="Connect", bg ='green', command = self.connectserver)     
+        self.connectButton.pack(side=LEFT, padx=5, pady=5)
+        self.disconnectButton = Button(self, text="Disconnect",state=DISABLED ,bg ='green', command = self.disconnect)     
+        self.disconnectButton.pack(side=LEFT, padx=5, pady=5)
         closeButton = Button(self, text="Close", command = self.quit)
         closeButton.pack(side=RIGHT, padx=5, pady=5)
         
@@ -252,6 +332,5 @@ class Application(Frame):
         self.submitBtn.pack(side=LEFT)
  
 root = Tk()
-#root.geometry("300x200+300+300")
 app = Application(root)
 root.mainloop()
