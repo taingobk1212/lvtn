@@ -23,14 +23,33 @@
 -->
 
 <additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
-	<e1Detector id="ltkntd_detector_0" lane="ltk32_e9_0" pos="16.26" freq="100.00" file="NUL"/>
-    <e1Detector id="ltkntd_detector_1" lane="ltk32_e9_1" pos="16.30" freq="100.00" file="NUL"/>
+	<e1Detector id="ltkntd_detector_0" lane="ltk32_e9_0" pos="6.39" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkntd_detector_1" lane="ltk32_e9_1" pos="6.10" freq="100.00" file="NUL"/>
 
     <e1Detector id="lg_detector_0" lane="lg_e26_0" pos="5.05" freq="100.00" file="NUL"/>
     <e1Detector id="tht_detector_0" lane="tht_e13_0" pos="10.40" freq="100.00" file="NUL"/>
 
     <e1Detector id="ltkbd_detector_0" lane="ltkbh_e19_0" pos="7.69" freq="100.00" file="NUL"/>
     <e1Detector id="ltkbd_detector_1" lane="ltkbh_e19_1" pos="7.99" freq="100.00" file="NUL"/>
+
+    <!-- pass vehicle -->
+    <e1Detector id="ltkbd_pass_detector_0" lane="ltkbh_e2_0" pos="3.46" freq="100.00" file="NUL"/>    
+    <e1Detector id="ltkbd_pass_detector_1" lane="ltkbh_e2_1" pos="3.48" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkbd_pass_detector_2" lane="ltkbh_e2_2" pos="3.50" freq="100.00" file="NUL"/>    
+    <e1Detector id="ltkbd_pass_detector_3" lane="ltkbh_e2_3" pos="3.52" freq="100.00" file="NUL"/>
+
+    <e1Detector id="lg_pass_detector_0" lane="lg_e2_0" pos="3.5" freq="100.00" file="NUL"/>
+    <e1Detector id="lg_pass_detector_1" lane="lg_e2_1" pos="3.47" freq="100.00" file="NUL"/>
+
+    <e1Detector id="ltkntd_pass_detector_0" lane="ltk32_e2_0" pos="1.88" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkntd_pass_detector_1" lane="ltk32_e2_1" pos="1.88" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkntd_pass_detector_2" lane="ltk32_e2_2" pos="1.92" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkntd_pass_detector_3" lane="ltk32_e2_3" pos="2.04" freq="100.00" file="NUL"/>
+
+
+    <e1Detector id="tht_pass_detector_0" lane="tht_e2_0" pos="2.96" freq="100.00" file="NUL"/>
+    <e1Detector id="tht_pass_detector_1" lane="tht_e2_1" pos="2.98" freq="100.00" file="NUL"/>
+
     
     
     <location netOffset="-680627.26,-1189444.46" convBoundary="-95.53,-0.00,2195.98,3031.47" origBoundary="106.651045,10.755565,106.672100,10.782918" projParameter="+proj=utm +zone=48 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"/>
