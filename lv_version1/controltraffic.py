@@ -104,12 +104,19 @@ class Application(Frame):
         step = 0
         putdatadetail = False
         while traci.simulation.getMinExpectedNumber() > 0:                  
-            traci.simulationStep()                     
+            traci.simulationStep()          
+
+            #list vehicle in lane
+            # print(traci.lane.getLastStepVehicleIDs("ltk32_e10_1"))    
+            self.queueVehicleLength_ltkntd()    
+            self.queueVehicleLength_ltkbd() 
+            self.queueVehicleLength_lg() 
+            self.queueVehicleLength_tht()
 
             if (int(traci.simulation.getTime())%181) == 0:
                 putdatadetail = False
 
-            if (int(traci.simulation.getTime())%180) == 0:   
+            if (int(traci.simulation.getTime())%180) == 0 and int(traci.simulation.getTime()) > 0 and putdatadetail == False:   
                 print("Vehicle come 3 minute ago")             
                 print("lg come: ", len(self.list_vehicle_lg))
                 print("tht come: ", len(self.list_vehicle_tht))
@@ -123,11 +130,15 @@ class Application(Frame):
 
                 print(putdatadetail)    
                 # clear list after 3 minute                                
-                if (self.connected == True and  putdatadetail == False):
-                    print("putdata")
-                    info = {'id':'ltk_lg','apprid1':'ltklg_bd', 'apprid2':'ltklg_ntd', 'apprid3':'ltklg_lg', 'apprid4':'ltklg_tht', 'vhccome1': len(self.list_vehicle_ltkbd), 'vhccome2': len(self.list_vehicle_ltkntd), 'vhccome3': len(self.list_vehicle_lg), 'vhccome4': len(self.list_vehicle_tht), 'vhcout1': len(self.list_vehiclepass_ltkbd), 'vhcout2': len(self.list_vehiclepass_ltkntd), 'vhcout3': len(self.list_vehiclepass_lg), 'vhcout4': len(self.list_vehiclepass_tht)}      
-                    res = requests.get(httphost_putdetails, params = info)
-                    print(res)
+                if (self.connected == True and  putdatadetail == False):                    
+                    # tinh van toc trung binh
+                    vtb_ltkntd = (traci.lane.getLastStepMeanSpeed("ltk32_e10_0") + traci.lane.getLastStepMeanSpeed("ltk32_e10_1"))/2
+                    vtb_ltkbd = (traci.lane.getLastStepMeanSpeed("ltkbh_e2_0") + traci.lane.getLastStepMeanSpeed("ltkbh_e2_1"))/2
+                    vtb_lg = (traci.lane.getLastStepMeanSpeed("lg_e28_0") + traci.lane.getLastStepMeanSpeed("lg_e29_0"))/2
+                    vtb_tht = traci.lane.getLastStepMeanSpeed("tht_e13_0")
+
+                    info = {'id':'ltk_lg','apprid1':'ltklg_bd', 'apprid2':'ltklg_ntd', 'apprid3':'ltklg_lg', 'apprid4':'ltklg_tht', 'vhccome1': len(self.list_vehicle_ltkbd), 'vhccome2': len(self.list_vehicle_ltkntd), 'vhccome3': len(self.list_vehicle_lg), 'vhccome4': len(self.list_vehicle_tht), 'vhcout1': len(self.list_vehiclepass_ltkbd), 'vhcout2': len(self.list_vehiclepass_ltkntd), 'vhcout3': len(self.list_vehiclepass_lg), 'vhcout4': len(self.list_vehiclepass_tht),'vtb1':vtb_ltkbd, 'vtb2': vtb_ltkntd, 'vtb3': vtb_lg, 'vtb4': vtb_tht}      
+                    res = requests.get(httphost_putdetails, params = info)                    
                     self.list_vehicle_lg = []
                     self.list_vehicle_tht = []
                     self.list_vehicle_ltkbd = []
@@ -227,6 +238,126 @@ class Application(Frame):
         traci.close()
         sys.stdout.flush() 
 
+    def queueVehicleLength_ltkntd(self):
+        # return 0
+        # print(traci.lane.getLastStepVehicleIDs(":ltk32_junc1_0_0") + traci.lane.getLastStepVehicleIDs(":ltk32_junc1_0_1"))
+        # traci.lane.getLength("ltk32_e10_0")
+        minpos_ltkntd = traci.lane.getLength("ltk32_e11_0")
+        queue_ltkntd = traci.lane.getLastStepVehicleIDs("ltk32_e11_0") + traci.lane.getLastStepVehicleIDs("ltk32_e11_1")
+        for vhcid in queue_ltkntd:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                if (minpos_ltkntd > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_ltkntd = traci.vehicle.getLanePosition(vhcid)
+        length_ltkntd = traci.lane.getLength("ltk32_e11_0") - minpos_ltkntd
+        
+        minpos_ltkntd = traci.lane.getLength(":ltk32_junc1_0_0")
+        queue_ltkntd = traci.lane.getLastStepVehicleIDs(":ltk32_junc1_0_0") + traci.lane.getLastStepVehicleIDs(":ltk32_junc1_0_1")
+        for vhcid in queue_ltkntd:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                if (minpos_ltkntd > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_ltkntd = traci.vehicle.getLanePosition(vhcid)
+        if (traci.lane.getLength(":ltk32_junc1_0_0") - minpos_ltkntd) > 0:            
+            length_ltkntd =length_ltkntd + traci.lane.getLength(":ltk32_junc1_0_0") - minpos_ltkntd
+
+        minpos_ltkntd = traci.lane.getLength("ltk32_e10_0")
+        queue_ltkntd = traci.lane.getLastStepVehicleIDs("ltk32_e10_0") + traci.lane.getLastStepVehicleIDs("ltk32_e10_1")        
+        for vhcid in queue_ltkntd:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                if (minpos_ltkntd > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_ltkntd = traci.vehicle.getLanePosition(vhcid)
+        if (traci.lane.getLength("ltk32_e10_0") - minpos_ltkntd) > 0:            
+            length_ltkntd =length_ltkntd + traci.lane.getLength("ltk32_e10_0") - minpos_ltkntd    
+
+        print("NTD: ",length_ltkntd)  
+        print("Waitting time: ", traci.lane.getWaitingTime("ltk32_e11_0") + traci.lane.getWaitingTime("ltk32_e11_1"))  
+
+    def queueVehicleLength_ltkbd(self):        
+        minpos_ltkbd = traci.lane.getLength("ltkbh_e22_0")
+        queue_ltkbd = traci.lane.getLastStepVehicleIDs("ltkbh_e22_0") + traci.lane.getLastStepVehicleIDs("ltkbh_e22_1")
+        for vhcid in queue_ltkbd:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                if (minpos_ltkbd > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_ltkbd = traci.vehicle.getLanePosition(vhcid)
+        length_ltkbd = traci.lane.getLength("ltkbh_e22_0") - minpos_ltkbd
+        
+        minpos_ltkbd = traci.lane.getLength(":ltkbh_junc1_9_0")
+        queue_ltkbd = traci.lane.getLastStepVehicleIDs(":ltkbh_junc1_9_0") + traci.lane.getLastStepVehicleIDs(":ltkbh_junc1_9_1")
+        for vhcid in queue_ltkbd:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                if (minpos_ltkbd > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_ltkbd = traci.vehicle.getLanePosition(vhcid)
+        if (traci.lane.getLength(":ltkbh_junc1_9_0") - minpos_ltkbd) > 0:            
+            length_ltkbd =length_ltkbd + traci.lane.getLength(":ltkbh_junc1_9_0") - minpos_ltkbd
+
+        minpos_ltkbd = traci.lane.getLength("ltkbh_e21_0")
+        queue_ltkbd = traci.lane.getLastStepVehicleIDs("ltkbh_e21_0") + traci.lane.getLastStepVehicleIDs("ltkbh_e21_1")        
+        for vhcid in queue_ltkbd:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                if (minpos_ltkbd > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_ltkbd = traci.vehicle.getLanePosition(vhcid)
+        if (traci.lane.getLength("ltkbh_e21_0") - minpos_ltkbd) > 0:            
+            length_ltkbd =length_ltkbd + traci.lane.getLength("ltkbh_e21_0") - minpos_ltkbd    
+
+        print("BD: ",length_ltkbd) 
+
+    def queueVehicleLength_lg(self):        
+        minpos_lg = traci.lane.getLength("lg_e30_0")
+        queue_lg = traci.lane.getLastStepVehicleIDs("lg_e30_0")
+        for vhcid in queue_lg:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                if (minpos_lg > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_lg = traci.vehicle.getLanePosition(vhcid)
+        length_lg = traci.lane.getLength("lg_e30_0") - minpos_lg
+        
+        minpos_lg = traci.lane.getLength(":lg_junc1_5_0")
+        queue_lg = traci.lane.getLastStepVehicleIDs(":lg_junc1_5_0")
+        for vhcid in queue_lg:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                if (minpos_lg > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_lg = traci.vehicle.getLanePosition(vhcid)
+        if (traci.lane.getLength(":lg_junc1_5_0") - minpos_lg) > 0:            
+            length_lg =length_lg + traci.lane.getLength(":lg_junc1_5_0") - minpos_lg
+
+        minpos_lg = traci.lane.getLength("lg_e29_0")
+        queue_lg = traci.lane.getLastStepVehicleIDs("lg_e29_0")     
+        for vhcid in queue_lg:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                if (minpos_lg > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_lg = traci.vehicle.getLanePosition(vhcid)
+        if (traci.lane.getLength("lg_e29_0") - minpos_lg) > 0:            
+            length_lg =length_lg + traci.lane.getLength("lg_e29_0") - minpos_lg    
+
+        print("LG: ",length_lg)     
+
+    def queueVehicleLength_tht(self):        
+        minpos_tht = traci.lane.getLength("tht_e14_0")
+        queue_tht = traci.lane.getLastStepVehicleIDs("tht_e14_0")
+        for vhcid in queue_tht:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                if (minpos_tht > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_tht = traci.vehicle.getLanePosition(vhcid)
+        length_tht = traci.lane.getLength("tht_e14_0") - minpos_tht
+        
+        minpos_tht = traci.lane.getLength(":tht_junc1_1_0")
+        queue_tht = traci.lane.getLastStepVehicleIDs(":tht_junc1_1_0")
+        for vhcid in queue_tht:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                if (minpos_tht > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_tht = traci.vehicle.getLanePosition(vhcid)
+        if (traci.lane.getLength(":tht_junc1_1_0") - minpos_tht) > 0:            
+            length_tht =length_tht + traci.lane.getLength(":tht_junc1_1_0") - minpos_tht
+
+        minpos_tht = traci.lane.getLength("tht_e13_0")
+        queue_tht = traci.lane.getLastStepVehicleIDs("tht_e13_0")     
+        for vhcid in queue_tht:
+            if traci.vehicle.getSpeed(vhcid) <= 1.38 and traci.vehicle.getLanePosition(vhcid) > 10:
+                if (minpos_tht > traci.vehicle.getLanePosition(vhcid)):
+                    minpos_tht = traci.vehicle.getLanePosition(vhcid)
+        if (traci.lane.getLength("tht_e13_0") - minpos_tht) > 0:            
+            length_tht =length_tht + traci.lane.getLength("tht_e13_0") - minpos_tht    
+
+        print("THT: ",length_tht)      
+
     def countVehicleCome(self, listInductionLoopId):
         global list_vehicle_ltkbd, list_vehicle_ltkntd, list_vehicle_lg, list_vehicle_tht, list_vehiclepass_ltkbd, list_vehiclepass_ltkntd, list_vehiclepass_lg, list_vehiclepass_tht
         nvhc_lg = []       
@@ -245,7 +376,7 @@ class Application(Frame):
                 nvhc_lg = traci.inductionloop.getLastStepVehicleIDs(inductionLoopId)               
                 for vehicleId in nvhc_lg:
                     if (self.list_vehicle_lg.count(vehicleId) == 0):
-                        self.list_vehicle_lg.append(vehicleId)
+                        self.list_vehicle_lg.append(vehicleId)                       
 
             if 'tht_detector' in inductionLoopId:             
                 nvhc_tht = traci.inductionloop.getLastStepVehicleIDs(inductionLoopId)  
@@ -291,12 +422,6 @@ class Application(Frame):
                 for vehicleId in nvhc_pass_tht:
                     if (self.list_vehiclepass_tht.count(vehicleId) == 0):
                         self.list_vehiclepass_tht.append(vehicleId)                                    
-
-
-        # print("lg come: ", len(self.list_vehicle_lg))
-        # print("tht come: ", len(self.list_vehicle_tht))
-        # print("ltkbd come: ", len(self.list_vehicle_ltkbd))
-        # print("ltkntd come: ", len(self.list_vehicle_ltkntd))
 
     def start_sumo(self):        
         options = self.get_options()      
@@ -354,30 +479,30 @@ class Application(Frame):
         global HOST, PORT       
         try:
             # get ip lan wireless 
-            self.HOST = socket.gethostbyname_ex(socket.gethostname())[2][3]
-            print("Connected server by " + self.HOST)
+            self.HOST = socket.gethostbyname_ex(socket.gethostname())[2][3]            
             info = {'id':'ltk_lg'}      
-            res = requests.get('http://'+self.HOST+':'+self.PORT+'/home/gettldata', params = info)                       
-            self.connected = True
-            self.isfirst = True
-            self.disconnectButton.configure(state=NORMAL)     
-            self.connectButton.configure(state=DISABLED)            
+            res = requests.get('http://'+self.HOST+':'+self.PORT+'/home/gettldata', params = info)              
+            # print(res.status_code)   
+            if (res.status_code == 200):
+                print("Connected server by " + self.HOST)      
+                self.connected = True
+                self.isfirst = True
+                self.disconnectButton.configure(state=NORMAL)     
+                self.connectButton.configure(state=DISABLED)  
+            else:
+                print("Connect fail") 
+                self.connected = False  
+                self.isfirst = True               
         except:
             print("Connect fail") 
             self.connected = False  
             self.isfirst = True 
 
-    def disconnect(self):
-        print(socket.gethostbyname_ex(socket.gethostname())[2][3])                
+    def disconnect(self):                      
         self.connected = False 
         self.isfirst = True       
         self.disconnectButton.configure(state=DISABLED)     
-        self.connectButton.configure(state=NORMAL)    
-
-        self.HOST = socket.gethostbyname_ex(socket.gethostname())[2][3]
-        print("Connected server by " + self.HOST)
-        info = {'id':'ltk_lg','vltkbd':1,'vltkntd':1,'vlg':1,'vtht':1}    
-        res = requests.get('http://'+self.HOST+':'+self.PORT+'/home/puttldatadetails', params = info)  
+        self.connectButton.configure(state=NORMAL)
 
     def initUI(self):
         self.parent.title("Traffic Controller")        
