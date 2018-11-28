@@ -94,7 +94,7 @@ class Application(Frame):
    
     def run_sumo(self):       
         global set_phase_ltk, set_phase_lgtht, connected, isfirst, issetparams, HOST, PORT
-        global list_vehicle_ltkbd, list_vehicle_ltkntd, list_vehicle_lg, list_vehicle_tht
+        global list_vehicle_ltkbd, list_vehicle_ltkntd, list_vehicle_lg, list_vehicle_tht       
         traci.switch("sumovn")       
         """execute the TraCI control loop"""
         print('running')
@@ -107,11 +107,8 @@ class Application(Frame):
             traci.simulationStep()          
 
             #list vehicle in lane
-            # print(traci.lane.getLastStepVehicleIDs("ltk32_e10_1"))    
-            self.queueVehicleLength_ltkntd()    
-            self.queueVehicleLength_ltkbd() 
-            self.queueVehicleLength_lg() 
-            self.queueVehicleLength_tht()
+            # print(traci.lane.getLastStepVehicleIDs("ltk32_e10_1"))   
+            
 
             if (int(traci.simulation.getTime())%181) == 0:
                 putdatadetail = False
@@ -136,8 +133,12 @@ class Application(Frame):
                     vtb_ltkbd = (traci.lane.getLastStepMeanSpeed("ltkbh_e2_0") + traci.lane.getLastStepMeanSpeed("ltkbh_e2_1"))/2
                     vtb_lg = (traci.lane.getLastStepMeanSpeed("lg_e28_0") + traci.lane.getLastStepMeanSpeed("lg_e29_0"))/2
                     vtb_tht = traci.lane.getLastStepMeanSpeed("tht_e13_0")
-
-                    info = {'id':'ltk_lg','apprid1':'ltklg_bd', 'apprid2':'ltklg_ntd', 'apprid3':'ltklg_lg', 'apprid4':'ltklg_tht', 'vhccome1': len(self.list_vehicle_ltkbd), 'vhccome2': len(self.list_vehicle_ltkntd), 'vhccome3': len(self.list_vehicle_lg), 'vhccome4': len(self.list_vehicle_tht), 'vhcout1': len(self.list_vehiclepass_ltkbd), 'vhcout2': len(self.list_vehiclepass_ltkntd), 'vhcout3': len(self.list_vehiclepass_lg), 'vhcout4': len(self.list_vehiclepass_tht),'vtb1':vtb_ltkbd, 'vtb2': vtb_ltkntd, 'vtb3': vtb_lg, 'vtb4': vtb_tht}      
+                    
+                    result_ltkntd = self.queueVehicleLength_ltkntd()    
+                    result_ltkbd = self.queueVehicleLength_ltkbd() 
+                    result_lg = self.queueVehicleLength_lg() 
+                    result_tht = self.queueVehicleLength_tht()
+                    info = {'id':'ltk_lg','apprid1':'ltklg_bd', 'apprid2':'ltklg_ntd', 'apprid3':'ltklg_lg', 'apprid4':'ltklg_tht', 'vhccome1': len(self.list_vehicle_ltkbd), 'vhccome2': len(self.list_vehicle_ltkntd), 'vhccome3': len(self.list_vehicle_lg), 'vhccome4': len(self.list_vehicle_tht), 'vhcout1': len(self.list_vehiclepass_ltkbd), 'vhcout2': len(self.list_vehiclepass_ltkntd), 'vhcout3': len(self.list_vehiclepass_lg), 'vhcout4': len(self.list_vehiclepass_tht),'vtb1':vtb_ltkbd, 'vtb2': vtb_ltkntd, 'vtb3': vtb_lg, 'vtb4': vtb_tht, 'queue_elength1': result_ltkbd[0], 'queue_elength2': result_ltkntd[0], 'queue_elength3': result_lg[0], 'queue_elength4': result_tht[0], 'waittime1': result_ltkbd[1], 'waittime2': result_ltkntd[1], 'waittime3': result_lg[1], 'waittime4': result_tht[1]}      
                     res = requests.get(httphost_putdetails, params = info)                    
                     self.list_vehicle_lg = []
                     self.list_vehicle_tht = []
@@ -242,10 +243,12 @@ class Application(Frame):
         # return 0
         # print(traci.lane.getLastStepVehicleIDs(":ltk32_junc1_0_0") + traci.lane.getLastStepVehicleIDs(":ltk32_junc1_0_1"))
         # traci.lane.getLength("ltk32_e10_0")
+        numberVehicle = 0
         minpos_ltkntd = traci.lane.getLength("ltk32_e11_0")
         queue_ltkntd = traci.lane.getLastStepVehicleIDs("ltk32_e11_0") + traci.lane.getLastStepVehicleIDs("ltk32_e11_1")
         for vhcid in queue_ltkntd:
             if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                numberVehicle += 1
                 if (minpos_ltkntd > traci.vehicle.getLanePosition(vhcid)):
                     minpos_ltkntd = traci.vehicle.getLanePosition(vhcid)
         length_ltkntd = traci.lane.getLength("ltk32_e11_0") - minpos_ltkntd
@@ -254,6 +257,7 @@ class Application(Frame):
         queue_ltkntd = traci.lane.getLastStepVehicleIDs(":ltk32_junc1_0_0") + traci.lane.getLastStepVehicleIDs(":ltk32_junc1_0_1")
         for vhcid in queue_ltkntd:
             if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                numberVehicle += 1
                 if (minpos_ltkntd > traci.vehicle.getLanePosition(vhcid)):
                     minpos_ltkntd = traci.vehicle.getLanePosition(vhcid)
         if (traci.lane.getLength(":ltk32_junc1_0_0") - minpos_ltkntd) > 0:            
@@ -263,19 +267,29 @@ class Application(Frame):
         queue_ltkntd = traci.lane.getLastStepVehicleIDs("ltk32_e10_0") + traci.lane.getLastStepVehicleIDs("ltk32_e10_1")        
         for vhcid in queue_ltkntd:
             if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                numberVehicle += 1
                 if (minpos_ltkntd > traci.vehicle.getLanePosition(vhcid)):
                     minpos_ltkntd = traci.vehicle.getLanePosition(vhcid)
         if (traci.lane.getLength("ltk32_e10_0") - minpos_ltkntd) > 0:            
             length_ltkntd =length_ltkntd + traci.lane.getLength("ltk32_e10_0") - minpos_ltkntd    
 
-        print("NTD: ",length_ltkntd)  
-        print("Waitting time: ", traci.lane.getWaitingTime("ltk32_e11_0") + traci.lane.getWaitingTime("ltk32_e11_1"))  
+        total_wait_time = traci.lane.getWaitingTime("ltk32_e11_0") + traci.lane.getWaitingTime("ltk32_e11_1") + traci.lane.getWaitingTime("ltk32_e10_0") + traci.lane.getWaitingTime("ltk32_e10_1") + traci.lane.getWaitingTime(":ltk32_junc1_0_0") + traci.lane.getWaitingTime(":ltk32_junc1_0_1")   
+        if numberVehicle > 0:
+            wait_time_tb = total_wait_time / numberVehicle    
+        else:
+            wait_time_tb = 0  
+        # print("NTD: ",length_ltkntd)  
+        # print("Waitting time: ", wait_time_tb) 
+        data = [length_ltkntd, wait_time_tb]
+        return data 
 
-    def queueVehicleLength_ltkbd(self):        
+    def queueVehicleLength_ltkbd(self): 
+        numberVehicle = 0       
         minpos_ltkbd = traci.lane.getLength("ltkbh_e22_0")
         queue_ltkbd = traci.lane.getLastStepVehicleIDs("ltkbh_e22_0") + traci.lane.getLastStepVehicleIDs("ltkbh_e22_1")
         for vhcid in queue_ltkbd:
             if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                numberVehicle += 1
                 if (minpos_ltkbd > traci.vehicle.getLanePosition(vhcid)):
                     minpos_ltkbd = traci.vehicle.getLanePosition(vhcid)
         length_ltkbd = traci.lane.getLength("ltkbh_e22_0") - minpos_ltkbd
@@ -284,6 +298,7 @@ class Application(Frame):
         queue_ltkbd = traci.lane.getLastStepVehicleIDs(":ltkbh_junc1_9_0") + traci.lane.getLastStepVehicleIDs(":ltkbh_junc1_9_1")
         for vhcid in queue_ltkbd:
             if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                numberVehicle += 1
                 if (minpos_ltkbd > traci.vehicle.getLanePosition(vhcid)):
                     minpos_ltkbd = traci.vehicle.getLanePosition(vhcid)
         if (traci.lane.getLength(":ltkbh_junc1_9_0") - minpos_ltkbd) > 0:            
@@ -293,18 +308,29 @@ class Application(Frame):
         queue_ltkbd = traci.lane.getLastStepVehicleIDs("ltkbh_e21_0") + traci.lane.getLastStepVehicleIDs("ltkbh_e21_1")        
         for vhcid in queue_ltkbd:
             if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                numberVehicle += 1
                 if (minpos_ltkbd > traci.vehicle.getLanePosition(vhcid)):
                     minpos_ltkbd = traci.vehicle.getLanePosition(vhcid)
         if (traci.lane.getLength("ltkbh_e21_0") - minpos_ltkbd) > 0:            
             length_ltkbd =length_ltkbd + traci.lane.getLength("ltkbh_e21_0") - minpos_ltkbd    
 
-        print("BD: ",length_ltkbd) 
+        total_wait_time = traci.lane.getWaitingTime("ltkbh_e22_0") + traci.lane.getWaitingTime("ltkbh_e22_1") + traci.lane.getWaitingTime("ltkbh_e21_0") + traci.lane.getWaitingTime("ltkbh_e21_1") + traci.lane.getWaitingTime(":ltkbh_junc1_9_0") + traci.lane.getWaitingTime(":ltkbh_junc1_9_1")   
+        if numberVehicle > 0:
+            wait_time_tb = total_wait_time / numberVehicle    
+        else:
+            wait_time_tb = 0    
+        # print("BD: ",length_ltkbd) 
+        # print("Waitting time: ", wait_time_tb) 
+        data = [length_ltkbd, wait_time_tb]
+        return data  
 
-    def queueVehicleLength_lg(self):        
+    def queueVehicleLength_lg(self):   
+        numberVehicle = 0     
         minpos_lg = traci.lane.getLength("lg_e30_0")
         queue_lg = traci.lane.getLastStepVehicleIDs("lg_e30_0")
         for vhcid in queue_lg:
             if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                numberVehicle += 1
                 if (minpos_lg > traci.vehicle.getLanePosition(vhcid)):
                     minpos_lg = traci.vehicle.getLanePosition(vhcid)
         length_lg = traci.lane.getLength("lg_e30_0") - minpos_lg
@@ -313,6 +339,7 @@ class Application(Frame):
         queue_lg = traci.lane.getLastStepVehicleIDs(":lg_junc1_5_0")
         for vhcid in queue_lg:
             if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                numberVehicle += 1
                 if (minpos_lg > traci.vehicle.getLanePosition(vhcid)):
                     minpos_lg = traci.vehicle.getLanePosition(vhcid)
         if (traci.lane.getLength(":lg_junc1_5_0") - minpos_lg) > 0:            
@@ -322,18 +349,29 @@ class Application(Frame):
         queue_lg = traci.lane.getLastStepVehicleIDs("lg_e29_0")     
         for vhcid in queue_lg:
             if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                numberVehicle += 1
                 if (minpos_lg > traci.vehicle.getLanePosition(vhcid)):
                     minpos_lg = traci.vehicle.getLanePosition(vhcid)
         if (traci.lane.getLength("lg_e29_0") - minpos_lg) > 0:            
             length_lg =length_lg + traci.lane.getLength("lg_e29_0") - minpos_lg    
 
-        print("LG: ",length_lg)     
+        total_wait_time = traci.lane.getWaitingTime("lg_e30_0") + traci.lane.getWaitingTime("lg_e9_0") + traci.lane.getWaitingTime(":lg_junc1_5_0")
+        if numberVehicle > 0:
+            wait_time_tb = total_wait_time / numberVehicle    
+        else:
+            wait_time_tb = 0     
+        # print("LG: ",length_lg, numberVehicle) 
+        # print("Waitting time: ", wait_time_tb)      
+        data = [length_lg, wait_time_tb]
+        return data 
 
-    def queueVehicleLength_tht(self):        
+    def queueVehicleLength_tht(self):    
+        numberVehicle = 0    
         minpos_tht = traci.lane.getLength("tht_e14_0")
         queue_tht = traci.lane.getLastStepVehicleIDs("tht_e14_0")
         for vhcid in queue_tht:
             if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                numberVehicle += 1
                 if (minpos_tht > traci.vehicle.getLanePosition(vhcid)):
                     minpos_tht = traci.vehicle.getLanePosition(vhcid)
         length_tht = traci.lane.getLength("tht_e14_0") - minpos_tht
@@ -342,6 +380,7 @@ class Application(Frame):
         queue_tht = traci.lane.getLastStepVehicleIDs(":tht_junc1_1_0")
         for vhcid in queue_tht:
             if traci.vehicle.getSpeed(vhcid) <= 1.38:
+                numberVehicle += 1
                 if (minpos_tht > traci.vehicle.getLanePosition(vhcid)):
                     minpos_tht = traci.vehicle.getLanePosition(vhcid)
         if (traci.lane.getLength(":tht_junc1_1_0") - minpos_tht) > 0:            
@@ -351,12 +390,21 @@ class Application(Frame):
         queue_tht = traci.lane.getLastStepVehicleIDs("tht_e13_0")     
         for vhcid in queue_tht:
             if traci.vehicle.getSpeed(vhcid) <= 1.38 and traci.vehicle.getLanePosition(vhcid) > 10:
+                numberVehicle += 1
                 if (minpos_tht > traci.vehicle.getLanePosition(vhcid)):
                     minpos_tht = traci.vehicle.getLanePosition(vhcid)
         if (traci.lane.getLength("tht_e13_0") - minpos_tht) > 0:            
             length_tht =length_tht + traci.lane.getLength("tht_e13_0") - minpos_tht    
 
-        print("THT: ",length_tht)      
+        total_wait_time = traci.lane.getWaitingTime("tht_e14_0") + traci.lane.getWaitingTime("tht_e13_0") + traci.lane.getWaitingTime(":tht_junc1_1_0")
+        if numberVehicle > 0:
+            wait_time_tb = total_wait_time / numberVehicle    
+        else:
+            wait_time_tb = 0    
+        # print("THT: ",length_tht, numberVehicle)  
+        # print("Waitting time: ", wait_time_tb)   
+        data = [length_tht, wait_time_tb]
+        return data  
 
     def countVehicleCome(self, listInductionLoopId):
         global list_vehicle_ltkbd, list_vehicle_ltkntd, list_vehicle_lg, list_vehicle_tht, list_vehiclepass_ltkbd, list_vehiclepass_ltkntd, list_vehiclepass_lg, list_vehiclepass_tht

@@ -298,22 +298,22 @@
                   for (i = 0; i < count; i++) {
                     switch(i) {                                        
                       case 0:
-                        appendColumn(response.apprname1,response.vtb1,response.vhccome1,response.vhcout1);
+                        appendColumn(response.apprname1,response.vtb1,response.vhccome1,response.vhcout1,response.queuelength1,response.waittime1);
                         break;
                       case 1:
-                        appendColumn(response.apprname2,response.vtb2,response.vhccome2,response.vhcout2);
+                        appendColumn(response.apprname2,response.vtb2,response.vhccome2,response.vhcout2,response.queuelength2,response.waittime2);
                         break;
                       case 2:
-                        appendColumn(response.apprname3,response.vtb3,response.vhccome3,response.vhcout3);
+                        appendColumn(response.apprname3,response.vtb3,response.vhccome3,response.vhcout3,response.queuelength3,response.waittime3);
                         break;
                       case 3:
-                        appendColumn(response.apprname4,response.vtb4,response.vhccome4,response.vhcout4);
+                        appendColumn(response.apprname4,response.vtb4,response.vhccome4,response.vhcout4,response.queuelength4,response.waittime4);
                         break;
                       case 4:
-                        appendColumn(response.apprname5,response.vtb5,response.vhccome5,response.vhcout5);
+                        appendColumn(response.apprname5,response.vtb5,response.vhccome5,response.vhcout5,response.queuelength5,response.waittime5);
                         break;
                       case 5:
-                        appendColumn(response.apprname6,response.vtb6,response.vhccome6,response.vhcout6);
+                        appendColumn(response.apprname6,response.vtb6,response.vhccome6,response.vhcout6,response.queuelength6,response.waittime6);
                         break;
                     }
                   }                  
@@ -336,14 +336,18 @@
           }
         }
       }
-      function appendColumn(appr,vtb,vhccome,vhcout) {        
+      function appendColumn(appr,vtb,vhccome,vhcout,queuelength,waittime) {        
         var tbl = document.getElementById('my-table'), // table reference
         i, fvtb;
         createCell(tbl.rows[0].insertCell(tbl.rows[0].cells.length), appr, 'col');           
         vtb = Math.round(vtb * 100)/100;
         createCell(tbl.rows[1].insertCell(tbl.rows[1].cells.length), vtb, 'col');
         createCell(tbl.rows[2].insertCell(tbl.rows[2].cells.length), vhccome, 'col');
-        createCell(tbl.rows[3].insertCell(tbl.rows[3].cells.length), vhcout, 'col');                 
+        createCell(tbl.rows[3].insertCell(tbl.rows[3].cells.length), vhcout, 'col'); 
+        queuelength = Math.round(queuelength * 100)/100;
+        createCell(tbl.rows[4].insertCell(tbl.rows[4].cells.length), queuelength, 'col');
+        waittime = Math.round(waittime * 100)/100;
+        createCell(tbl.rows[5].insertCell(tbl.rows[5].cells.length), waittime, 'col');                
       }
       function createCell(cell, text, style) {
         var div = document.createElement('div'), // create DIV element
@@ -382,6 +386,12 @@
             </tr>
             <tr>
               <td>Phuong tien ra (c)</td>            
+            </tr>
+            <tr>
+              <td>Chieu dai hang doi (m)</td>            
+            </tr>
+            <tr>
+              <td>Thoi gian cho trung binh (s)</td>            
             </tr>
           </table>
           <br>

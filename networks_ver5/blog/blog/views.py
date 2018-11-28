@@ -31,7 +31,9 @@ def getintersectiondata(request):
         jsstring = jsstring + "'" + "apprname" + str(count) + "'" + ":" + "'" + obj.appr_name + "'" +","
         jsstring = jsstring + "'" + "vtb" + str(count) + "'" + ":" + "'" + str(obj.vtb) + "'" + ","
         jsstring = jsstring + "'" + "vhccome" + str(count) + "'" + ":" + "'" + str(obj.vhc_come) + "'" + ","
-        jsstring = jsstring + "'" + "vhcout" + str(count) + "'" + ":" + "'" + str(obj.vhc_out) + "'"
+        jsstring = jsstring + "'" + "vhcout" + str(count) + "'" + ":" + "'" + str(obj.vhc_out) + "'" + ","
+        jsstring = jsstring + "'" + "queuelength" + str(count) + "'" + ":" + "'" + str(obj.vhc_queue_length) + "'" + ","
+        jsstring = jsstring + "'" + "waittime" + str(count) + "'" + ":" + "'" + str(obj.wait_avrg) + "'"
         
     jsstring = jsstring + ",'" + "count" + "'" + ":"+ str(count) +"}"
     if (count == 0):       
@@ -74,21 +76,29 @@ def putdatadetails(request):
            obj.vhc_come = request.GET.get('vhccome1')
            obj.vhc_out = request.GET.get('vhcout1')
            obj.vtb = request.GET.get('vtb1')
+           obj.vhc_queue_length = request.GET.get('queue_elength1')
+           obj.wait_avrg = request.GET.get('waittime1')
            obj.save()  
         if (obj.appr_id == request.GET.get('apprid2')):
            obj.vhc_come = request.GET.get('vhccome2')
            obj.vhc_out = request.GET.get('vhcout2')   
            obj.vtb = request.GET.get('vtb2')  
+           obj.vhc_queue_length = request.GET.get('queue_elength2')
+           obj.wait_avrg = request.GET.get('waittime2')
            obj.save()      
         if (obj.appr_id == request.GET.get('apprid3')):
            obj.vhc_come = request.GET.get('vhccome3')
            obj.vhc_out = request.GET.get('vhcout3')   
            obj.vtb = request.GET.get('vtb3')
+           obj.vhc_queue_length = request.GET.get('queue_elength3')
+           obj.wait_avrg = request.GET.get('waittime3')
            obj.save()         
         if (obj.appr_id == request.GET.get('apprid4')):
            obj.vhc_come = request.GET.get('vhccome4')  
            obj.vhc_out = request.GET.get('vhcout4')   
            obj.vtb = request.GET.get('vtb4')
+           obj.vhc_queue_length = request.GET.get('queue_elength4')
+           obj.wait_avrg = request.GET.get('waittime4')
            obj.save()  
 
          
