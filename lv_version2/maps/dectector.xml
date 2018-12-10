@@ -1,0 +1,26 @@
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <e1Detector id="lg_detector_1" lane="lg_e26_1" pos="16.26" freq="100.00" file="NUL"/>
+    <e1Detector id="lg_detector_2" lane="lg_e26_0" pos="16.30" freq="100.00" file="NUL"/>
+    <e1Detector id="lg_pass_detector_1" lane="lg_e2_1" pos="2.47" freq="900.00" file="e1Detector_lg_e2_1_23.xml"/>
+    <e1Detector id="lg_pass_detector_2" lane="lg_e2_0" pos="2.40" freq="900.00" file=""/>
+    <e1Detector id="ltk32_left_detector_1" lane="ltk32_e9_3" pos="16.50" freq="100.00" file="NUL"/>
+    <e1Detector id="ltk32_left_detector_2" lane="ltk32_e9_2" pos="16.43" freq="100.00" file="NUL"/>
+    <e1Detector id="ltk32_pass_left_detector_1" lane="ltk32_e2_3" pos="2.63" freq="100.00" file="NUL"/>
+    <e1Detector id="ltk32_pass_left_detector_2" lane="ltk32_e2_2" pos="2.64" freq="100.00" file="NUL"/>
+    <e1Detector id="ltk32_pass_right_detector_1" lane="ltk32_e2_1" pos="2.69" freq="100.00" file="NUL"/>
+    <e1Detector id="ltk32_pass_right_detector_2" lane="ltk32_e2_0" pos="2.77" freq="100.00" file="NUL"/>
+    <e1Detector id="ltk32_right_detector_1" lane="ltk32_e9_1" pos="16.50" freq="100.00" file="NUL"/>
+    <e1Detector id="ltk32_right_detector_2" lane="ltk32_e9_0" pos="16.39" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkbh_left_detector_1" lane="ltkbh_e20_3" pos="13.55" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkbh_left_detector_2" lane="ltkbh_e20_2" pos="13.57" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkbh_pass_left_detector_1" lane="ltkbh_e2_3" pos="2.63" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkbh_pass_left_detector_2" lane="ltkbh_e2_2" pos="2.78" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkbh_pass_right_detector_1" lane="ltkbh_e2_1" pos="2.78" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkbh_pass_right_detector_2" lane="ltkbh_e2_0" pos="2.85" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkbh_right_detector_1" lane="ltkbh_e20_1" pos="13.64" freq="100.00" file="NUL"/>
+    <e1Detector id="ltkbh_right_detector_2" lane="ltkbh_e20_0" pos="13.57" freq="100.00" file="NUL"/>
+    <e1Detector id="tht_detector_1" lane="tht_e13_1" pos="21.48" freq="100.00" file="NUL"/>
+    <e1Detector id="tht_detector_2" lane="tht_e13_0" pos="21.48" freq="100.00" file="NUL"/>
+    <e1Detector id="tht_pass_detector_1" lane="tht_e2_1" pos="2.19" freq="900.00" file="e1Detector_tht_e2_1_23.xml"/>
+    <e1Detector id="tht_pass_detector_2" lane="tht_e2_0" pos="2.13" freq="900.00" file="e1Detector_tht_e2_0_23.xml"/>
+</additional>

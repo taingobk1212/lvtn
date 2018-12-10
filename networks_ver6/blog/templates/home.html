@@ -1,0 +1,443 @@
+{% load leaflet_tags %}
+<html>
+  <head>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>      
+      .leaflet-container { height: 100%; }
+      input {
+        outline: 1px;
+        background-color: white;
+        border: 1px;
+        padding: 10px 15px;
+        {% comment %} color: #53e3a6; {% endcomment %}
+        color: black;
+        border-radius: 3px;
+        width: 125px;
+        cursor: pointer;
+        font-size: 18px;        
+        margin-top: 1px;
+        margin-right: 2px;
+      }
+      a {
+        font-size: 18px; 
+      }
+      button {
+        outline: 0;
+        background-color: gray;
+        border: 0;
+        padding: 10px 15px;
+        color: #53e3a6;
+        border-radius: 3px;
+        width: 125px;
+        cursor: pointer;
+        font-size: 18px;        
+        margin-top: 1px;
+        margin-right: 2px;
+      }
+      button:hover {
+        background-color: black;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13px;       
+        border-collapse: collapse;
+        text-align: center;
+        padding: 8px;         
+      }
+
+      th, td {
+        border: 1px solid #ddd;
+        text-align: center;
+        font-size: 13px;  
+        {% comment %} padding: 8px;  {% endcomment %}
+      }
+      .formcontrol input[type=text] {
+        text-align: center;
+        font-size: 13px;  
+      }
+      
+      {% comment %} tr:nth-child(even){background-color: #f2f2f2} {% endcomment %}
+
+      th {
+        background-color: #4CAF50;
+        color: white;        
+      }
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #50a3a2;
+        background: -webkit-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
+        background: linear-gradient(to bottom right, #50a3a2 0%, #53e3a6 100%);
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      body h1 {
+        font-size: 40px;
+        font-weight: 200;
+      }
+      .topnav {
+        overflow: hidden;
+        background-color: #e9e9e9;
+      }
+
+    .topnav a {
+      float: right;
+      display: block;
+      color: black;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+
+    .topnav a.active {
+      background-color: #2196F3;
+      color: white;
+    }
+
+    .topnav .login-container {
+      float: right;
+    }
+
+    .topnav input[type=text] {
+      padding: 6px;
+      margin-top: 8px;
+      font-size: 17px;
+      border: none;
+      width:120px;
+    }
+
+    .topnav .login-container button {
+      float: right;
+      padding: 6px 10px;
+      margin-top: 8px;
+      margin-right: 16px;
+      background-color: #555;
+      color: white;
+      font-size: 17px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .topnav .login-container button:hover {
+        background-color: green;
+    }
+
+    @media screen and (max-width: 600px) {
+    .topnav .login-container {
+      float: none;
+    }
+    .topnav a, .topnav input[type=text], .topnav .login-container button {
+      float: none;
+      display: block;
+      text-align: left;
+      width: 100%;
+      margin: 0;
+      padding: 14px;
+    }
+    .topnav input[type=text] {
+      border: 1px solid #ccc;  
+    }
+    }     
+    </style>
+    <script type="text/javascript">
+      var datatraffic = null;
+      var dataurl = '{% url "data" %}';
+      var dataLoc = [    
+		    {"loc":[10.770446,106.658124], "title":"ltk_lg"},
+		    {"loc":[10.763809,106.659989], "title":"ltk_32"},
+        {"loc":[10.792855, 106.65338], "title":"bayhien"}
+      ];
+      var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
+      window.addEventListener("map:init", function (event) {
+        var map = event.detail.map;
+        var flagPast=0;
+        var marker;
+        var markers;   
+        var phase1 = 0;
+        var phase2 = 0; 
+        var id=''; 
+        var intname='';
+        var keyId;  
+        var contentpopup = "<a>Intersection Name:"+ intname +"</a><br><a id=\"tltime\"></a><menu><a>ID:</a><input type=\"text\" id=\"idmarker\" value="+ id +" readonly><br><a>Green tl Cycle of</a><input id = \"p1marker\" type=\"number\" value="+phase1+"><br><a>Green tl Cycle of</a><input id = \"p2marker\" type=\"number\" value="+phase2+"><br><button onclick=\"setParams()\">Set params</button><button>Auto</button></menu>";
+        // Download GeoJSON data with Ajax
+        fetch(dataurl)
+          .then(function(resp) {
+            return resp.json();
+          })
+          .then(function(data) {
+            L.geoJson(data, {
+              onEachFeature: function onEachFeature(feature, layer) {
+                var props = feature.properties;
+                var content = `<img width="300" src="${props.picture_url}"/><h3>${props.title}</h3><p>${props.description}</p>`;
+                layer.bindPopup(content);
+            }}).addTo(map);
+          }); 
+          for (i in dataLoc) {
+          // alert(i);
+          var loc = dataLoc[i].loc;          
+          marker = new L.Marker(new L.latLng(loc),{title:dataLoc[i].title}).on('click', markerOnClick).addTo(map);    
+          marker.key = dataLoc[i].title;      
+          marker.bindPopup(contentpopup,{maxWidth:1000}).openPopup();   
+          marker.bindPopup(contentpopup).closePopup();
+        }  
+      var myLayer = L.geoJSON().addTo(map);
+      });     
+      function markerOnClick(e)
+      { 
+          keyId = e.target.key;
+          // ajax getdata
+          $.ajax({
+                type: 'get',                
+                url: 'gettldata',
+                data:  (
+                  {   
+                    //'csrfmiddlewaretoken': token,
+                    id: e.target.key
+                  }
+                ) 
+                ,
+                success: function(response) {
+                  id = response['id'];
+                  intname = response['name'];                  
+                  count = Object.keys(response['trafficlight']).length;  
+                  jsdata = response;             
+                  contentpopup = "<menu><a style=\"color: red\">Intersection Name:"+ intname +"</a><br>";                               
+                  for (i = 0; i < count; i++) {
+                      apprname = response['trafficlight'][i]['apprname'];
+                      tlgreen = response['trafficlight'][i]['tlgreen'];
+                      tlyellow = response['trafficlight'][i]['tlyellow'];
+                      tlred = response['trafficlight'][i]['tlred'];
+                      apprid = response['trafficlight'][i]['apprid'];
+                      contentpopup = contentpopup + "<a>Tl Cycle of "+ apprname +":</a><input id = \"" +apprid+"_tlcycle\" type=\"number\" value="+ (parseInt(tlgreen) + parseInt(tlyellow) + parseInt(tlred)).toString() +"><br>"; 
+                      contentpopup = contentpopup + "<a>Green:</a><input id = \""+ apprid + "_green" + "\" type=\"number\" value="+tlgreen+"><br>"
+                      contentpopup = contentpopup + "<a>Yellow:</a><input id = \""+ apprid + "_yellow" + "\" type=\"number\" value="+tlyellow+"><br>"
+                      contentpopup = contentpopup + "<a>Red:</a><input id = \""+ apprid + "_red" + "\" type=\"number\" value="+tlred+"><br>"
+                  }          
+                  contentpopup = contentpopup + "<button onclick=\"getDetails()\">Details</button><button onclick=\"setParams(jsdata)\">Set params</button><button onclick=\"setAuto()\">Auto</button><a style=\"color: red\">Status:</a><input style=\"font-size: 13px\" id=\"idtus\" value = \"None\" readonly></menu>";                 
+                  var popup = e.target.getPopup().setContent(contentpopup);                            
+                },
+                error: function(xhr, status, error) {
+                  // shit happens friends!
+                }
+              });                 
+      }    
+      function setParams(obj){       
+        count = Object.keys(obj['trafficlight']).length;  
+        x = [];
+        berror = false;
+        for (i = 0; i < count; i++) {
+          temp_id = obj['trafficlight'][i]['apprid'].toString();   
+          green = document.getElementById(temp_id+"_green").value;
+          yellow = document.getElementById(temp_id+"_yellow").value;
+          red = document.getElementById(temp_id+"_red").value;          
+          x[i] = document.getElementById(temp_id+"_tlcycle").value;
+
+          if ((parseInt(green) + parseInt(yellow) + parseInt(red)) != parseInt(x[i])){
+            berror = true;
+          }
+        }
+        if (!berror){
+        for (i = 0; i < count - 1; i++) {
+          if (x[i] != x[i+1]) berror = true;
+        }        
+        }
+        if (!berror){
+          document.getElementById("idtus").value = "Applied Params";
+        for (i = 0; i < count; i++) {
+          strapprid = obj['trafficlight'][i]['apprid'].toString();          
+        $.ajax({
+                type: 'get',                
+                url: 'puttrafficlightdata',
+                data:  (
+                  {
+                    id: keyId,
+                    apprid: strapprid,
+                    tlgreen : document.getElementById(strapprid + "_green").value,
+                    tlyellow : document.getElementById(strapprid + "_yellow").value,
+                    tlred : document.getElementById(strapprid + "_red").value,
+                    issetparams: 'True'
+                  }
+                ) 
+                ,
+                success: function(response) {   
+                    
+                },
+                error: function(xhr, status, error) {
+                  // shit happens friends!                  
+                }
+              });    
+        }   
+        } else {
+          document.getElementById("idtus").value = "Error";
+          alert("Nhập lỗi! Vui lòng nhập lại!");
+        }       
+      }    
+       function setAuto(){
+        //alert("test");
+        document.getElementById("idtus").value = "Auto";
+        $.ajax({
+                type: 'get',                
+                url: 'puttldata',
+                data:  (
+                  {
+                    id: keyId,
+                    tlauto: 'True'
+                  }
+                ) 
+                ,
+                success: function(response) {   
+                  
+                },
+                error: function(xhr, status, error) {
+                  // shit happens friends!
+                }
+              });              
+      }  
+      function getDetails(){                    
+          document.getElementById('controlDialog').showModal(loaddata());         
+      }  
+      function startTime() {
+        var today = new Date();
+        var h = today.getHours();
+        var m = today.getMinutes();
+        var s = today.getSeconds();
+        m = checkTime(m);
+        s = checkTime(s);
+        document.getElementById('tltime').innerHTML =
+        h + ":" + m + ":" + s;
+        var t = setTimeout(startTime, 500);
+      }
+      function checkTime(i) {
+        if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+        return i;
+      }  
+
+      function loaddata(){
+        // alert("test");
+        // document.getElementById('vantoc1').value = 12.3;
+        $.ajax({
+                type: 'get',                
+                url: 'getinterdata',
+                data:  (
+                  {   
+                    //'csrfmiddlewaretoken': token,
+                    id: id
+                  }
+                ) 
+                ,
+                success: function(response) {
+                  deleteColumns();                                    
+                  var count = parseInt(response.count);                                 
+                  for (i = 0; i < count; i++) {
+                    switch(i) {                                        
+                      case 0:
+                        appendColumn(response.apprname1,response.vtb1,response.vhccome1,response.vhcout1,response.queuelength1,response.waittime1);
+                        break;
+                      case 1:
+                        appendColumn(response.apprname2,response.vtb2,response.vhccome2,response.vhcout2,response.queuelength2,response.waittime2);
+                        break;
+                      case 2:
+                        appendColumn(response.apprname3,response.vtb3,response.vhccome3,response.vhcout3,response.queuelength3,response.waittime3);
+                        break;
+                      case 3:
+                        appendColumn(response.apprname4,response.vtb4,response.vhccome4,response.vhcout4,response.queuelength4,response.waittime4);
+                        break;
+                      case 4:
+                        appendColumn(response.apprname5,response.vtb5,response.vhccome5,response.vhcout5,response.queuelength5,response.waittime5);
+                        break;
+                      case 5:
+                        appendColumn(response.apprname6,response.vtb6,response.vhccome6,response.vhcout6,response.queuelength6,response.waittime6);
+                        break;
+                    }
+                  }                  
+                },
+                error: function(xhr, status, error) {
+                  // shit happens friends!
+                  alert("bad");
+                }
+              });       
+
+      }      
+      function deleteColumns() {
+        var tbl = document.getElementById('my-table'), // table reference
+        lastCol = tbl.rows[0].cells.length - 1,    // set the last column index
+        i, j;
+        // delete cells with index greater then 0 (for each row)
+        for (i = 0; i < tbl.rows.length; i++) {
+          for (j = lastCol; j > 0; j--) {
+            tbl.rows[i].deleteCell(j);
+          }
+        }
+      }
+      function appendColumn(appr,vtb,vhccome,vhcout,queuelength,waittime) {        
+        var tbl = document.getElementById('my-table'), // table reference
+        i, fvtb;
+        createCell(tbl.rows[0].insertCell(tbl.rows[0].cells.length), appr, 'col');           
+        vtb = Math.round(vtb * 100)/100;
+        createCell(tbl.rows[1].insertCell(tbl.rows[1].cells.length), vtb, 'col');
+        createCell(tbl.rows[2].insertCell(tbl.rows[2].cells.length), vhccome, 'col');
+        createCell(tbl.rows[3].insertCell(tbl.rows[3].cells.length), vhcout, 'col'); 
+        queuelength = Math.round(queuelength * 100)/100;
+        createCell(tbl.rows[4].insertCell(tbl.rows[4].cells.length), queuelength, 'col');
+        waittime = Math.round(waittime * 100)/100;
+        createCell(tbl.rows[5].insertCell(tbl.rows[5].cells.length), waittime, 'col');                
+      }
+      function createCell(cell, text, style) {
+        var div = document.createElement('div'), // create DIV element
+        txt = document.createTextNode(text); // create text node
+        div.appendChild(txt);                    // append text node to the DIV
+        div.setAttribute('class', style);        // set DIV class attribute
+        div.setAttribute('className', style);    // set DIV class attribute for IE (?!)
+        cell.appendChild(div);                   // append DIV to the table cell
+      }
+    </script>
+   
+  </head>
+  <body onload="startTime()">           
+    <div class="topnav">
+        <a id="tltime"></a>
+        <a>{{ user.username }}</a>
+        <div class="login-container">
+          <form action="/action_page.php">     
+            <button type="button" onclick="window.location.href='/logout/' ">Logout</button>
+          </form>
+        </div>
+    </div>
+    <div class="formcontrol">
+    <dialog id="controlDialog">  
+    <form id="formctrl" method="dialog">           
+          <h3>Control Traffic Light</h3>          
+          <table id = "my-table" style="width:100%">
+            <tr>
+              <th>Lane</th>             
+            </tr>
+            <tr>
+              <td>Van toc trung binh (m/s)</td>              
+            </tr>
+            <tr>
+              <td>Phuong tien vao (c)</td>              
+            </tr>
+            <tr>
+              <td>Phuong tien ra (c)</td>            
+            </tr>
+            <tr>
+              <td>Chieu dai hang doi (m)</td>            
+            </tr>
+            <tr>
+              <td>Thoi gian cho trung binh (s)</td>            
+            </tr>
+          </table>
+          <br>
+          <button style="position: absolute; right: 12px; bottom: 5px;">Close</button>   
+    </form>          
+    </dialog>    
+    </div> 
+    {% leaflet_map "main" %}      
+  </body>
+</html>

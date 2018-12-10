@@ -1,0 +1,8 @@
+netconvert --osm-files map.osm -- lefthand --output.street-names -o map.net.xml
+
+polyconvert --net-file map.net.xml --osm-files map.osm --type-file typemap.xml -o map.poly.xml
+
+E:/LV_TotNghiep/code/Sumo/sumo-win64-1.0.1/sumo-1.0.1/tools/randomTrips.py -n map.net.xml -e 100 -l
+E:/LV_TotNghiep/code/Sumo/sumo-win64-1.0.1/sumo-1.0.1/tools/randomTrips.py -n map.net.xml -r map.rou.xml e 100 -l
+
+sumo-gui --time-to-teleport 60  --lateral-resolution 0.9 -c map.sumo.cfg
